@@ -1,0 +1,25 @@
+- name: Ensure boto is installed
+  apt: name=python-boto
+
+- name: Add elasticsearch user
+  user: name=elasticsearch state=present
+
+- name: Check for Elasticsearch {{ elasticsearch_version }} archive
+  stat: path=/tmp/elasticsearch-{{ elasticsearch_version }}.tar.gz
+  register: status
+
+- name: Download Elasticsearch {{ elasticsearch_version }} archive
+  s3_file: bucket={{ elasticsearch_s3_bucket }} object={{ elasticsearch_s3_base }}elasticsearch-{{ elasticsearch_version }}.tar.gz dest=/tmp/elasticsearch-{{ elasticsearch_version }}.tar.gz mode=get aws_access_key={{s3_key|default(omit)}} aws_secret_key={{s3_secret|default(omit)}}
+  when: not status.stat.exists
+
+- name: Extract Elasticsearch {{ elasticsearch_version }}
+  unarchive: copy=no src=/tmp/elasticsearch-{{ elasticsearch_version }}.tar.gz dest={{ elasticsearch_install_path }} creates={{elasticsearch_install_path}}/elasticsearch-{{ elasticsearch_version  }}
+  register: extract_es
+  notify: Restart Elasticsearch
+
+- name: Set ownership
+  shell: chown -R elasticsearch:elasticsearch {{ elasticsearch_install_path }}
+  when: extract_es.changed
+
+- name: Link {{ elasticsearch_version }} to {{ elasticsearch_install_path }}/elasticsearch
+  file: src={{ elasticsearch_install_path }}/elasticsearch-{{ elasticsearch_version }} dest={{ elasticsearch_install_path }}/elasticsearch state=link

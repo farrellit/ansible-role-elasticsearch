@@ -1,0 +1,45 @@
+# Do normal remove reinstall
+- name: Stopping Elasticsearch with supervisor
+  supervisorctl: name=elasticsearch state=stopped
+  failed_when: false
+
+- stat: path=/etc/supervisor/conf.d/elasticsearch.conf
+  register: es_supervisor
+
+- name: Removing all versions of Elasticsearch
+  shell: rm -r --interactive=never {{ elasticsearch_install_path }}/elasticsearch-*
+  register: remove
+  changed_when: remove.rc !=1
+  failed_when: false
+
+- name: Unlinking
+  file: path={{ elasticsearch_install_path }}/logstash state=absent
+
+# Do specific complete removal for state=absent
+- name: Removing supervisor config
+  file: path=/etc/supervisor/conf.d/elasticsearch.conf state=absent
+  when: es_supervisor.stat.exists and elasticsearch_state == 'absent'
+
+- name: Updating supervisorctl
+  shell: supervisorctl update
+  when: es_supervisor.stat.exists and elasticsearch_state == 'absent'
+
+- name: Removing log directory {{ elasticsearch_path_logs }}
+  file: path={{ elasticsearch_path_logs }} state=absent
+  when: elasticsearch_state == 'absent' and elasticsearch_path_logs is defined
+
+- name: Removing data directory {{ elasticsearch_path_data }}
+  file: path={{ elasticsearch_path_data }} state=absent
+  when: elasticsearch_state == 'absent' and elasticsearch_path_data is defined
+
+- name: Removing conf directory {{ elasticsearch_path_conf }}
+  file: path={{ elasticsearch_path_conf }} state=absent
+  when: elasticsearch_state == 'absent' and elasticsearch_path_conf is defined
+
+- name: Removing work directory {{ elasticsearch_path_work }}
+  file: path={{ elasticsearch_path_work }} state=absent
+  when: elasticsearch_state == 'absent' and elasticsearch_path_work is defined
+
+- name: Removing plugins directory {{ elasticsearch_path_plugins }}
+  file: path={{ elasticsearch_path_work }} state=absent
+  when: elasticsearch_state == 'absent' and elasticsearch_path_plugins is defined

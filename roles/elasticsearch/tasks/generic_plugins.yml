@@ -1,0 +1,6 @@
+# TODO check to see if its installed first
+- name: Installing plugins
+  shell: sudo -u {{ elasticsearch_user }} bin/plugin --install {{ item.name }} chdir={{ elasticsearch_path_plugins }}
+  with_items: elasticsearch_plugins
+  when: elasticsearch_plugins is defined
+

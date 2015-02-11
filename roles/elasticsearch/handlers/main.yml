@@ -1,0 +1,4 @@
+---
+- name: Restart Elasticsearch
+  supervisorctl: name=elasticsearch state=restarted
+  when: elasticsearch_supervisor_state == 'started'

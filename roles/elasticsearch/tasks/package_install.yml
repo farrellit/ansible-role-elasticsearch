@@ -1,0 +1,13 @@
+- name: Add elasticsearch user
+  user: name=elasticsearch state=present
+
+- apt: name=elasticsearch={{ elasticsearch_version }} state=present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  notify: Restart Elasticsearch
+
+- yum: name=elasticsearch-{{ elasticsearch_version }} state=present
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  notify: Restart Elasticsearch
+
+- name: Removing included scripts in favor of supervisor
+  file: path=/etc/init.d/elasticsearch state=absent

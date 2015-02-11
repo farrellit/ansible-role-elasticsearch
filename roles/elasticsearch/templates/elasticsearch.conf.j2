@@ -1,0 +1,27 @@
+[program:elasticsearch]
+command={{elasticsearch_install_path}}/elasticsearch/bin/elasticsearch
+process_name=%(program_name)s
+numprocs=1
+directory={{elasticsearch_install_path}}/elasticsearch
+umask=022
+priority=999
+autostart={{ elasticsearch_autostart }}
+autorestart=true
+startsecs=10
+startretries=3
+exitcodes=0,2
+stopsignal=TERM
+stopwaitsecs=10
+user={{ elasticsearch_user }}
+redirect_stderr=true
+stdout_logfile={{ elasticsearch_path_logs }}/elasticsearch.stdout
+stdout_logfile_maxbytes=25MB
+stdout_logfile_backups=5
+stdout_capture_maxbytes=5MB
+stderr_logfile={{ elasticsearch_path_logs }}/elasticsearch.stderr
+stderr_logfile_maxbytes=25MB
+stderr_logfile_backups=5
+stderr_capture_maxbytes=5MB
+environment={% if elasticsearch_java_home %}JAVA_HOME="{{ elasticsearch_java_home}}",{% endif %}{% if elasticsearch_heap_size is defined %}ES_HEAP_SIZE="{{ elasticsearch_heap_size }}",{% endif %}{% if elasticsearch_heap_newsize is defined %}ES_HEAP_NEWSIZE="{{ elasticsearch_heap_newsize }}",{% endif %}{% if elasticsearch_direct_size is defined %}ES_DIRECT_SIZE="{{ elasticsearch_direct_size }}",{% endif %}{% if elasticsearch_java_opts is defined %}ES_JAVA_OPTS="{{ elasticsearch_java_opts }}",{% endif %}
+
+serverurl=AUTO

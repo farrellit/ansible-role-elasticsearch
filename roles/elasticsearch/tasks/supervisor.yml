@@ -1,0 +1,13 @@
+- file: path=/etc/supervisor/conf.d state=directory recurse=true
+- apt: name=supervisor
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+- yum: name=supervisor state=present
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+- name: Setup Supervisor conf file for Elasticsearch
+  template:
+    src=elasticsearch.conf.j2
+    dest=/etc/supervisor/conf.d/elasticsearch.conf
+  notify: Restart Elasticsearch
+
+- name: Register Elasticsearch with supervisorctl
+  supervisorctl: name=elasticsearch state=present

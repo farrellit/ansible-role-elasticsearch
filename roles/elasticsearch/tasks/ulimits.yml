@@ -1,0 +1,9 @@
+- name: Setting max memory
+  lineinfile: dest=/etc/security/limits.conf insertafter=EOF line='{{ elasticsearch_user }} - memlock {{ elasticsearch_max_locked_memory }}' regexp='^{{ elasticsearch_user }} - memlock {{ elasticsearch_max_locked_memory }}'
+  when: elasticsearch_max_memory is defined
+  notify: Restart Elasticsearch
+
+- name: Setting max open files
+  lineinfile: dest=/etc/security/limits.conf insertafter=EOF line='{{ elasticsearch_user }} - nofile {{ elasticsearch_max_open_files }}' regexp='^{{ elasticsearch_user }} - nofile {{ elasticsearch_max_open_files }}'
+  when: elasticsearch_max_open_files is defined
+  notify: Restart Elasticsearch

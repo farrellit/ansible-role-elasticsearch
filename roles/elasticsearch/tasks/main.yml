@@ -1,0 +1,24 @@
+---
+# Check to see if version is installed
+- name: Checking to see if Elasticsearch is already installed at {{ elasticsearch_install_path }}/elasticsearch-{{ elasticsearch_version }}
+  stat: path={{ elasticsearch_install_path }}/elasticsearch-{{ elasticsearch_version }}/bin/elasticsearch
+  register: es_installed
+
+- include: remove.yml
+  when: (elasticsearch_remove_old and not es_installed.stat.exists) or elasticsearch_state == 'absent'
+
+- include: s3_install.yml
+  when: elasticsearch_install_method == 's3' and (not es_installed.stat.exists and elasticsearch_state == 'present')
+
+- include: package_install.yml
+  when: elasticsearch_install_method == 'package' and (not es_installed.stat.exists and elasticsearch_state == 'present')
+
+- include: config.yml
+  when: elasticsearch_state == 'present'
+
+- include: supervisor.yml
+  when: elasticsearch_state == 'present'
+
+- name: Ensure Elasticsearch is running
+  supervisorctl: name=elasticsearch state=started
+  when: elasticsearch_supervisor_state == 'started' and elasticsearch_state == 'present'
