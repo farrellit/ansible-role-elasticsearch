@@ -17,5 +17,5 @@
          elasticsearch_s3_bucket: sps-build-deploy,
          elasticsearch_s3_base: /non-sps/elasticsearch/elasticsearch/,
          elasticsearch_java_home: /opt/java/java8,
-         elasticsearch_state: absent
+         elasticsearch_state: present
        }

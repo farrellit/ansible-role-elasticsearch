@@ -1,5 +1,5 @@
 [program:elasticsearch]
-command={{elasticsearch_install_path}}/elasticsearch/bin/elasticsearch
+command={{elasticsearch_install_path}}/elasticsearch/bin/elasticsearch -Des.config={{ elasticsearch_path_conf }}/elasticsearch.yml
 process_name=%(program_name)s
 numprocs=1
 directory={{elasticsearch_install_path}}/elasticsearch

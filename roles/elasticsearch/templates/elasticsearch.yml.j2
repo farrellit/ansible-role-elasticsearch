@@ -1,12 +1,9 @@
-################################### Cluster ###################################
 {% if elasticsearch_cluster_name is defined %}
 cluster.name: {{ elasticsearch_cluster_name }}
 {% endif %}
 {% if elasticsearch_cluster_routing_allocation_awareness_attributes is defined %}
 cluster.routing.allocation.awareness.attributes: {{ elasticsearch_cluster_routing_allocation_awareness_attributes }}
 {% endif %}
-
-#################################### Node #####################################
 {% if elasticsearch_node_name is defined %}
 node.name: {{ elasticsearch_node_name }}
 {% endif %}
@@ -24,16 +21,18 @@ node.max_local_storage_nodes: {{ elasticsearch_node_max_local_storage_nodes }}
 node.{{ attribute }}: {{ value }}
 {% endfor %}
 {% endif %}
-
-#################################### Index ####################################
 {% if elasticsearch_index_number_of_shards is defined %}
 index.number_of_shards: {{ elasticsearch_index_number_of_shards }}
 {% endif %}
 {% if elasticsearch_index_number_of_replicas is defined %}
 index.number_of_replicas: {{ elasticsearch_index_number_of_replicas }}
 {% endif %}
-
-#################################### Paths ####################################
+{% if elasticsearch_index_translog_flush_threshold_ops is defined %}
+index.translog.flush.threshold_ops: {{ elasticsearch_index_translog_flush_threshold_ops }}
+{% endif %}
+{% if elasticsearch_index_memory_index_buffer_size is defined %}
+indices.memory.index_buffer_size: {{ elasticsearch_index_memory_index_buffer_size }}
+{% endif %}
 {% if elasticsearch_path_conf is defined %}
 path.conf: {{ elasticsearch_path_conf }}
 {% endif %}
@@ -49,26 +48,12 @@ path.logs: {{ elasticsearch_path_logs }}
 {% if elasticsearch_path_plugins is defined %}
 path.plugins: {{ elasticsearch_path_plugins }}
 {% endif %}
-
-#################################### Plugin ###################################
 {% if elasticsearch_plugin_mandatory is defined %}
 plugin.mandatory: {{ elasticsearch_plugin_mandatory }}
 {% endif %}
-
-################################### Memory ####################################
 {% if elasticsearch_bootstrap_mlockall is defined %}
 bootstrap.mlockall.: {{ elasticsearch_bootstrap_mlockall }}
 {% endif %}
-
-# Make sure that the ES_MIN_MEM and ES_MAX_MEM environment variables are set
-# to the same value, and that the machine has enough memory to allocate
-# for Elasticsearch, leaving enough memory for the operating system itself.
-#
-# You should also make sure that the Elasticsearch process is allowed to lock
-# the memory, eg. by using `ulimit -l unlimited`.
-
-
-############################## Network And HTTP ###############################
 {% if elasticsearch_network_bind_host is defined %}
 network.bind_host: {{ elasticsearch_network_bind_host }}
 {% endif %}
@@ -81,7 +66,7 @@ network.host: {{ elasticsearch_network_host }}
 {% if elasticsearch_transport_tcp_port is defined %}
 transport.tcp.port.: {{ elasticsearch_transport_tcp_port }}
 {% endif %}
-{% if elasticsearch_tcp_compress is defined %}
+{% if elasticsearch_transport_tcp_compress is defined %}
 transport.tcp.compress.: {{ elasticsearch_transport_tcp_compress }}
 {% endif %}
 {% if elasticsearch_http_port is defined %}
@@ -93,8 +78,6 @@ http.max_content_length: {{ elasticsearch_network_ }}
 {% if elasticsearch_http_enabled is defined %}
 http.enabled: {{ elasticsearch_http_enabled }}
 {% endif %}
-
-################################### Gateway ###################################
 {% if elasticsearch_gateway_type is defined %}
 gateway.type: {{ elasticsearch_gateway_type }}
 {% endif %}
@@ -113,10 +96,11 @@ gateway.recover_after_time.: {{ elasticsearch_gateway_recover_after_time }}
 {% if elasticsearch_gateway_expected_nodes is defined %}
 gateway.expected_nodes: {{ elasticsearch_gateway_expected_nodes }}
 {% endif %}
-
-############################# Recovery Throttling #############################
-{% if elasticsearch_cluster_routing_allocation_node_initial_primaries_recoveries is defined %}
-cluster.routing.allocation.node_initial_primaries_recoveries: {{ elasticsearch_cluster_routing_allocation_node_initial_primaries_recoveries }}
+{% if elasticsearch_gateway_expected_data_nodes is defined %}
+gateway.expected_data_nodes: {{ elasticsearch_gateway_expected_data_nodes }}
+{% endif %}
+{% if elasticsearch_gateway_expected_master_nodes is defined %}
+gateway.expected_master_nodes: {{ elasticsearch_gateway_expected_master_nodes }}
 {% endif %}
 {% if elasticsearch_cluster_routing_allocation_node_concurrent_recoveries is defined %}
 cluster.routing.allocation.node_concurrent_recoveries: {{ elasticsearch_cluster_routing_allocation_node_concurrent_recoveries }}
@@ -127,8 +111,6 @@ indices.recovery.max_bytes_per_sec: {{ elasticsearch_indices_recovery_max_bytes_
 {% if elasticsearch_indices_recovery_concurrent_stream is defined %}
 indices.recovery.concurrent_stream: {{ elasticsearch_indices_recovery_concurrent_stream }}
 {% endif %}
-
-################################## Discovery ##################################
 {% if elasticsearch_discovery_zen_minimum_master_nodes is defined %}
 discovery.zen.minimum_master_nodes: {{ elasticsearch_discovery_zen_minimum_master_nodes }}
 {% endif %}
@@ -141,83 +123,24 @@ discovery.zen.ping.multicast.enabled: {{ elasticsearch_discovery_zen_ping_multic
 {% if elasticsearch_discovery_zen_ping_unicast_hosts is defined %}
 discovery.zen.ping.unicast.hosts: {{ elasticsearch_discovery_zen_ping_unicast_hosts }}
 {% endif %}
-
-################################## Slow Log ##################################
-# Shard level query and fetch threshold logging.
-{% if elasticsearch_index_search_slowlog_threshold_query_warn is defined %}
-index.search.slowlog.threshold.query.warn: {{ elasticsearch_index_search_slowlog_threshold_query_warn }}
-{% endif %}
-{% if elasticsearch_index_search_slowlog_threshold_query_info is defined %}
-index.search.slowlog.threshold.query.info: {{ elasticsearch_index_search_slowlog_threshold_query_info }}
-{% endif %}
-{% if elasticsearch_index_search_slowlog_threshold_query_debug is defined %}
-index.search.slowlog.threshold.query.debug: {{ elasticsearch_index_search_slowlog_threshold_query_debug }}
-{% endif %}
-{% if elasticsearch_index_search_slowlog_threshold_query_trace is defined %}
-index.search.slowlog.threshold.query.trace: {{ elasticsearch_index_search_slowlog_threshold_query_trace }}
-{% endif %}
-{% if elasticsearch_index_search_slowlog_threshold_fetch_warn is defined %}
-index.search.slowlog.threshold.fetch.warn: {{ elasticsearch_index_search_slowlog_threshold_fetch_warn }}
-{% endif %}
-{% if elasticsearch_index_search_slowlog_threshold_fetch_info is defined %}
-index.search.slowlog.threshold.fetch.info: {{ elasticsearch_index_search_slowlog_threshold_fetch_info }}
-{% endif %}
-{% if elasticsearch_index_search_slowlog_threshold_fetch_debug is defined %}
-index.search.slowlog.threshold.fetch.debug: {{ elasticsearch_index_search_slowlog_threshold_fetch_debug }}
-{% endif %}
-{% if elasticsearch_index_search_slowlog_threshold_fetch_trace is defined %}
-index.search.slowlog.threshold.fetch.trace: {{ elasticsearch_index_search_slowlog_threshold_fetch_trace }}
-{% endif %}
-{% if elasticsearch_index_search_slowlog_threshold_index_warn is defined %}
-index.search.slowlog.threshold.index.warn: {{ elasticsearch_index_search_slowlog_threshold_index_Warn }}
-{% endif %}
-{% if elasticsearch_index_search_slowlog_threshold_index_info is defined %}
-index.search.slowlog.threshold.index.info: {{ elasticsearch_index_search_slowlog_threshold_index_info }}
-{% endif %}
-{% if elasticsearch_index_search_slowlog_threshold_index_debug is defined %}
-index.search.slowlog.threshold.index.debug: {{ elasticsearch_index_search_slowlog_threshold_index_debug }}
-{% endif %}
-{% if elasticsearch_index_search_slowlog_threshold_index_trace is defined %}
-index.search.slowlog.threshold.index.trace: {{ elasticsearch_index_search_slowlog_threshold_index_trace }}
-{% endif %}
-
-################################## GC Logging ################################
-{% if elasticsearch_monitor_jvm_gc_young_warn is defined %}
-monitor.jvm.gc.young.warn: {{ elasticsearch_monitor_jvm_gc_young_warn }}
-{% endif %}
-{% if elasticsearch_monitor_jvm_gc_young_info is defined %}
-monitor.jvm.gc.young.info: {{ elasticsearch_monitor_jvm_gc_young_info }}
-{% endif %}
-{% if elasticsearch_monitor_jvm_gc_young_debug is defined %}
-monitor.jvm.gc.young.debug: {{ elasticsearch_monitor_jvm_gc_young_debug }}
-{% endif %}
-
-{% if elasticsearch_monitor_jvm_gc_old_warn is defined %}
-monitor.jvm.gc.old.warn: {{ elasticsearch_monitor_jvm_gc_old_debug }}
-{% endif %}
-{% if elasticsearch_monitor_jvm_gc_old_info is defined %}
-monitor.jvm.gc.old.info: {{ elasticsearch_monitor_jvm_gc_old_debug }}
-{% endif %}
-{% if elasticsearch_monitor_jvm_gc_old_debug is defined %}
-monitor.jvm.gc.old.debug: {{ elasticsearch_monitor_jvm_gc_old_debug }}
-{% endif %}
-
-################################## Security ################################
 http.jsonp.enable: false
-
-################################## Dynamic Scripting #######################
 {% if elasticsearch_script_disable_dynamic is defined %}
 script.disable_dynamic: {{ elasticsearch_script_disable_dynamic }}
 {% endif %}
-
-################################## CORS Settings ###########################
 {% if elasticsearch_http_cors_enabled is defined %}
 http.cors.enabled: {{ elasticsearch_http_cors_enabled }}
 {% endif %}
-
+{% if elasticsearch_http_cors_allow_origin is defined %}
+http.cors.allow-origin: {{ elasticsearch_http_cors_allow_origin }}
+{% endif %}
 {% if elasticsearch_plugin_aws is defined %}
-################################## AWS Settings ############################
 discovery.type: ec2
+{% if elasticsearch_plugin_aws_availability_zones is defined %}
+discovery.ec2.availability_zones: '{{ elasticsearch_plugin_aws_availability_zones }}'
+{% endif %}
+{% if elasticsearch_plugin_aws_any_group is defined %}
+discovery.ec2.any_group: '{{ elasticsearch_plugin_aws_any_group }}'
+{% endif %}
 {% if elasticsearch_plugin_aws_ec2_groups is defined %}
 discovery.ec2.groups: '{{ elasticsearch_plugin_aws_ec2_groups }}'
 {% endif %}
@@ -234,19 +157,13 @@ cloud.aws.secret_key: '{{ elasticsearch_plugin_aws_secret_key }}'
 {% if elasticsearch_plugin_aws_region is defined %}
 cloud.aws.region: {{ elasticsearch_plugin_aws_region}}
 {% endif %}
-
 {% endif %}
-
-################################## Misc ####################################
 {% if elasticsearch_action_auto_create_index is defined %}
 action.auto_create_index: {{ elasticsearch_action_auto_create_index }}
 {% endif %}
 {% if elasticsearch_action_disable_delete_all_indices is defined %}
 action.disable_delete_all_indices: {{ elasticsearch_action_disable_delete_all_indices }}
 {% endif %}
-
-################################## Additional ###############################
-# Non-predefined template items
 {% if elasticsearch_conf_additional is defined %}
 {% for additional_setting in elasticsearch_conf_additional %}
 {{ additional_setting }}

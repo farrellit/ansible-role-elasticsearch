@@ -27,6 +27,10 @@
   template: src=elasticsearch.yml.j2 dest={{ elasticsearch_path_conf }}/elasticsearch.yml
   notify: Restart Elasticsearch
 
+- name: Generating elasticsearcg logging config file
+  template: src=logging.yml.j2 dest={{ elasticsearch_path_conf }}/logging.yml
+  notify: Restart Elasticsearch
+
 - include: generic_plugins.yml
 
 - include: ulimits.yml
