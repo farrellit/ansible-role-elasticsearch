@@ -1,6 +1,8 @@
 # TODO check to see if its installed first
 - name: Installing plugins
-  shell: sudo -u {{ elasticsearch_user }} bin/plugin --install {{ item.name }} chdir={{ elasticsearch_path_plugins }}
+  shell: sudo -E -u {{ elasticsearch_user }} {{ elasticsearch_install_path }}/elasticsearch/bin/plugin --install {{ item.name }}
+  environment:
+    JAVA_HOME: "{{ elasticsearch_java_home }}"
   with_items: elasticsearch_plugins
   when: elasticsearch_plugins is defined
 
