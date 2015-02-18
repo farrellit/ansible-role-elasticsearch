@@ -17,5 +17,7 @@
          elasticsearch_s3_bucket: sps-build-deploy,
          elasticsearch_s3_base: /non-sps/elasticsearch/elasticsearch/,
          elasticsearch_java_home: /opt/java/java8,
-         elasticsearch_state: present
+         elasticsearch_state: present,
+         elasticsearch_plugins:
+           [ { name: elasticsearch/elasticsearch-cloud-aws/2.4.1 } ]
        }

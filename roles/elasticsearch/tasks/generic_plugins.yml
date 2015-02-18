@@ -5,4 +5,6 @@
     JAVA_HOME: "{{ elasticsearch_java_home }}"
   with_items: elasticsearch_plugins
   when: elasticsearch_plugins is defined
+  ignore_errors: yes
+
 
