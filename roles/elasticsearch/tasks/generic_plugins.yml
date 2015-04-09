@@ -6,5 +6,6 @@
   with_items: elasticsearch_plugins
   when: elasticsearch_plugins is defined
   ignore_errors: yes
-
+  args:
+    chdir: /etc/elasticsearch
 
