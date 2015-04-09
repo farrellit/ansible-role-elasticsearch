@@ -3,6 +3,8 @@
   shell: sudo -E -u {{ elasticsearch_user }} {{ elasticsearch_install_path }}/elasticsearch/bin/plugin --install {{ item.name }}
   environment:
     JAVA_HOME: "{{ elasticsearch_java_home }}"
+  args:
+    chdir: "{{ elasticsearch_install_path }}"
   with_items: elasticsearch_plugins
   when: elasticsearch_plugins is defined
   ignore_errors: yes
